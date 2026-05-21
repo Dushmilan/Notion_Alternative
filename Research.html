@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notion-Clone Architectural Blueprint</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+body { font-family: 'Inter', sans-serif; background-color: #F7F7F5; color: #37352F; }
+.chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 400px; max-height: 50vh; }
+.nav-btn.active { background-color: #EBEBEA; font-weight: 600; }
+.tab-btn.active { border-bottom: 2px solid #37352F; color: #37352F; }
+.hide { display: none; }
+</style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+<!-- Chosen Palette: Warm Neutrals (Notion-inspired). Background: #F7F7F5, Text: #37352F, Accents: #EBEBEA, #2563EB -->
+<!-- Application Structure Plan: A side-navigation whitepaper dashboard. This allows the user to linearly progress through the research phases (Frameworks -> Editors -> Sync -> AI -> Recipes) or jump directly to specific blueprints. The content is broken into digestible, interactive cards to prevent information overload, mirroring the 'block' philosophy of the target app. -->
+<!-- Visualization & Content Choices: 
+1. UI Frameworks -> Compare performance metrics -> Horizontal Bar Chart (Chart.js) -> Hover for exact scores -> Web technologies contrast well with native ones.
+2. Editor Engines -> Compare feature density -> Radar Chart (Chart.js) -> Highlights trade-offs between out-of-the-box features and extensibility. 
+3. Sync Arch -> Explain complex flow -> Interactive HTML/CSS Node Map -> Clicking nodes reveals CRDT/Drive API strategies -> No SVG used, pure DOM.
+4. Recipes -> Present final stacks -> Tabbed interface -> Easy switching between Web-dev and Bare-metal approaches. 
+-->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<nav class="w-64 bg-[#FFFFFF] border-r border-[#EBEBEA] flex flex-col hidden md:flex flex-shrink-0 z-10 relative">
+<div class="p-6">
+<h1 class="text-xl font-bold tracking-tight">ArchBlueprint</h1>
+<p class="text-xs text-gray-500 mt-1">Local-First Workspace</p>
+</div>
+<div class="flex-1 overflow-y-auto px-4 pb-6 space-y-1" id="nav-links">
+<button data-target="overview" class="nav-btn active w-full text-left px-3 py-2 rounded-md text-sm hover:bg-[#EBEBEA] transition-colors">Executive Summary</button>
+<button data-target="frameworks" class="nav-btn w-full text-left px-3 py-2 rounded-md text-sm hover:bg-[#EBEBEA] transition-colors">1. UI Frameworks</button>
+<button data-target="editors" class="nav-btn w-full text-left px-3 py-2 rounded-md text-sm hover:bg-[#EBEBEA] transition-colors">2. Editor Engines</button>
+<button data-target="sync" class="nav-btn w-full text-left px-3 py-2 rounded-md text-sm hover:bg-[#EBEBEA] transition-colors">3. Sync & Database</button>
+<button data-target="ai" class="nav-btn w-full text-left px-3 py-2 rounded-md text-sm hover:bg-[#EBEBEA] transition-colors">4. AI Optimization</button>
+<button data-target="recipes" class="nav-btn w-full text-left px-3 py-2 rounded-md text-sm hover:bg-[#EBEBEA] transition-colors">5. Tech Stack Recipes</button>
+</div>
+</nav>
+
+<main class="flex-1 overflow-y-auto p-6 md:p-12 relative" id="main-content">
+<div class="max-w-5xl mx-auto space-y-16 pb-24">
+
+<section id="overview" class="content-section block">
+<h2 class="text-3xl font-bold mb-4">Executive Summary</h2>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-[#EBEBEA] text-lg leading-relaxed">
+<p class="mb-4">This document details the architectural foundation for a high-performance, local-first, cross-platform (Windows/Android) workspace application. The system operates on a core philosophy of immediate startup times and offline capability, utilizing the user's personal Google Drive for cloud synchronization without relying on proprietary backend servers.</p>
+<p>Through comprehensive analysis, this interactive report evaluates cross-platform UI frameworks, block-based rich text editors, conflict-free database syncing (CRDTs), and code structures optimized specifically for AI-assisted development paradigms.</p>
+</div>
+</section>
+
+<section id="frameworks" class="content-section block">
+<h2 class="text-2xl font-bold mb-2">1. Cross-Platform UI Frameworks</h2>
+<p class="text-gray-600 mb-6">Evaluating Tauri v2, Flutter, and Kotlin Multiplatform (KMP) across memory footprint, rendering speed, and LLM-friendliness (availability of idiomatic training data). Higher scores (out of 10) are better.</p>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-[#EBEBEA] mb-6">
+<div class="chart-container">
+<canvas id="frameworkChart"></canvas>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-white p-4 rounded-lg shadow-sm border border-[#EBEBEA]">
+<h3 class="font-bold mb-2">Tauri v2 (Rust + TS)</h3>
+<p class="text-sm">Leverages OS-native webviews (WebView2 on Windows, System WebView on Android). Extremely small executable size. Excellent for AI-assisted development due to massive volumes of HTML/TS/React training data.</p>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-[#EBEBEA]">
+<h3 class="font-bold mb-2">Flutter (Dart)</h3>
+<p class="text-sm">Brings its own rendering engine (Impeller/Skia). Guarantees pixel-perfect UI across desktop and mobile. Heavier memory footprint than Tauri, but exceptionally fast rendering. Moderate LLM context depth.</p>
+</div>
+<div class="bg-white p-4 rounded-lg shadow-sm border border-[#EBEBEA]">
+<h3 class="font-bold mb-2">KMP + Compose</h3>
+<p class="text-sm">Compiles to native binaries. Unmatched Android performance, rapidly maturing desktop support. Syntax is concise, but Compose Multiplatform has less widespread AI training data compared to React/Web.</p>
+</div>
+</div>
+</section>
+
+<section id="editors" class="content-section block">
+<h2 class="text-2xl font-bold mb-2">2. The Block-Based Editor Core</h2>
+<p class="text-gray-600 mb-6">A Notion-like app requires granular blocks rather than standard markdown. We evaluate engines based on Extensibility, Out-of-the-box functionality, Mobile Support, and AI Context fit.</p>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-[#EBEBEA] mb-6 flex flex-col md:flex-row items-center">
+<div class="w-full md:w-1/2 chart-container h-[350px]">
+<canvas id="editorChart"></canvas>
+</div>
+<div class="w-full md:w-1/2 mt-6 md:mt-0 md:pl-8 space-y-4">
+<div class="p-3 border-l-4 border-[#37352F] bg-gray-50">
+<h4 class="font-bold text-sm">TipTap (ProseMirror based)</h4>
+<p class="text-xs text-gray-600">Headless, deeply extensible. Ideal for injecting custom CRDTs and relational DB links inline. High boilerplate required to get started.</p>
+</div>
+<div class="p-3 border-l-4 border-blue-400 bg-gray-50">
+<h4 class="font-bold text-sm">BlockNote</h4>
+<p class="text-xs text-gray-600">Built on top of TipTap, highly optimized for "Notion-like" block UI out of the box. Excellent for rapid AI generation with minimal boilerplate.</p>
+</div>
+<div class="p-3 border-l-4 border-green-400 bg-gray-50">
+<h4 class="font-bold text-sm">Lexical (Meta)</h4>
+<p class="text-xs text-gray-600">Unmatched performance and DOM management. However, its complex state update paradigm can cause AI hallucination without massive prompt context.</p>
+</div>
+<div class="p-3 border-l-4 border-purple-400 bg-gray-50">
+<h4 class="font-bold text-sm">Editor.js</h4>
+<p class="text-xs text-gray-600">Clean JSON output, true block architecture. Historically weaker on mobile touch interactions compared to ProseMirror-based solutions.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="sync" class="content-section block">
+<h2 class="text-2xl font-bold mb-2">3. Google Drive Sync & Database Architecture</h2>
+<p class="text-gray-600 mb-6">Traditional file syncing overwrites data. To achieve local-first, collaborative-style offline safety via Google Drive, we must use a CRDT (Conflict-Free Replicated Data Type) paired with an isolated Drive directory.</p>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-[#EBEBEA]">
+<div class="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 mb-8">
+<div class="w-40 h-24 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-center font-bold text-sm shadow cursor-pointer hover:bg-gray-200 transition" onclick="showSyncDetail('local')">
+Local Device<br>(SQLite + Yjs)
+</div>
+<div class="flex-1 flex items-center justify-center hidden md:flex">
+<div class="w-full h-1 bg-gray-300 relative">
+<div class="absolute -top-2 left-1/2 w-4 h-4 bg-blue-500 rounded-full transform -translate-x-1/2 animate-ping"></div>
+</div>
+</div>
+<div class="w-48 h-24 bg-blue-50 border-2 border-blue-300 rounded-xl flex items-center justify-center text-center font-bold text-sm shadow cursor-pointer hover:bg-blue-100 transition" onclick="showSyncDetail('drive')">
+Google Drive API<br>(appDataFolder)
+</div>
+<div class="flex-1 flex items-center justify-center hidden md:flex">
+<div class="w-full h-1 bg-gray-300 relative">
+<div class="absolute -top-2 left-1/2 w-4 h-4 bg-green-500 rounded-full transform -translate-x-1/2 animate-ping"></div>
+</div>
+</div>
+<div class="w-40 h-24 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-center font-bold text-sm shadow cursor-pointer hover:bg-gray-200 transition" onclick="showSyncDetail('crdt')">
+Device B<br>(Merge State)
+</div>
+</div>
+<div id="sync-detail-box" class="bg-gray-50 p-6 rounded border border-gray-200 min-h-[150px]">
+<h4 class="font-bold mb-2">Interactive Architecture Flow</h4>
+<p class="text-sm text-gray-700">Click on the nodes above to explore the specifics of the storage strategy, Google Drive API utilization, and CRDT conflict resolution.</p>
+</div>
+</div>
+</section>
+
+<section id="ai" class="content-section block">
+<h2 class="text-2xl font-bold mb-2">4. AI-Assisted Development Strategy</h2>
+<p class="text-gray-600 mb-6">To prevent LLM context exhaustion, the architecture must strictly separate concerns. Monolithic files will cause AI to drop context and introduce bugs.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-lg shadow-sm border border-[#EBEBEA]">
+<h3 class="font-bold mb-4 text-lg border-b pb-2">Recommended Folder Structure</h3>
+<pre class="text-xs bg-gray-900 text-green-400 p-4 rounded overflow-x-auto">
+src/
+├── core/
+│   ├── crdt/      [Yjs/Automerge logic]
+│   ├── db/        [Local SQLite adapters]
+│   └── sync/      [GDrive API workers]
+├── editor/
+│   ├── blocks/    [Custom Node definitions]
+│   └── extensions/[Toolbar, commands]
+├── ui/
+│   ├── components/[Dumb UI, buttons]
+│   └── views/     [Smart layout pages]
+└── state/         [Zustand/Riverpod stores]
+</pre>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-[#EBEBEA]">
+<h3 class="font-bold mb-4 text-lg border-b pb-2">State Management Paradigm</h3>
+<ul class="text-sm space-y-3">
+<li><strong class="text-blue-600">Avoid React Context hell:</strong> Use atomic state managers (like Zustand for TS or Riverpod for Dart). LLMs can easily parse atomic store definitions.</li>
+<li><strong class="text-blue-600">Data Flow:</strong> UI components dispatch actions -> State updates local Yjs Doc -> Local DB listener saves to disk -> Sync worker queues delta for GDrive upload.</li>
+<li><strong class="text-blue-600">AI Prompting Tip:</strong> Because the logic is decoupled, you can prompt the AI to "Write a new Custom Block for the Editor" without feeding it any networking or database code.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section id="recipes" class="content-section block">
+<h2 class="text-2xl font-bold mb-2">5. Definitive Stack Recipes</h2>
+<p class="text-gray-600 mb-6">Select a blueprint based on your target development experience and performance requirements.</p>
+
+<div class="border-b border-[#EBEBEA] mb-6 flex space-x-4">
+<button class="tab-btn active pb-2 font-medium text-gray-500" onclick="switchTab('recipeA', this)">Recipe A: Web-Familiar</button>
+<button class="tab-btn pb-2 font-medium text-gray-500" onclick="switchTab('recipeB', this)">Recipe B: Bare-Metal</button>
+</div>
+
+<div id="recipeA" class="recipe-content bg-white p-6 rounded-lg shadow-sm border border-blue-200">
+<h3 class="text-xl font-bold mb-4 text-blue-800">The Web-Dev Familiar Stack</h3>
+<p class="text-sm mb-6">Maximizes speed of UI development utilizing massive LLM training data for React/Web ecosystems.</p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+<div class="bg-blue-50 p-3 rounded border border-blue-100">
+<p class="text-xs text-gray-500 uppercase">Frontend</p>
+<p class="font-bold">Tauri v2 + React</p>
+</div>
+<div class="bg-blue-50 p-3 rounded border border-blue-100">
+<p class="text-xs text-gray-500 uppercase">Editor Engine</p>
+<p class="font-bold">BlockNote (TipTap)</p>
+</div>
+<div class="bg-blue-50 p-3 rounded border border-blue-100">
+<p class="text-xs text-gray-500 uppercase">Local Database</p>
+<p class="font-bold">SQLite (sql.js / tauri-plugin)</p>
+</div>
+<div class="bg-blue-50 p-3 rounded border border-blue-100">
+<p class="text-xs text-gray-500 uppercase">CRDT Layer</p>
+<p class="font-bold">Yjs + y-sqlite</p>
+</div>
+</div>
+<h4 class="font-bold text-sm mb-2">Sync Workflow:</h4>
+<ol class="list-decimal list-inside text-sm space-y-2 text-gray-700">
+<li>User types in BlockNote. Editor emits Yjs document updates (state vectors).</li>
+<li>Updates are flushed immediately to the local SQLite database via Tauri native Rust plugin.</li>
+<li>A background web worker chunks the Yjs state updates into binary blobs.</li>
+<li>Worker authenticates via Google Identity and uploads blobs to the hidden <code>appDataFolder</code> using Google Drive REST API.</li>
+<li>Other devices poll/sync <code>appDataFolder</code>, download new blobs, and apply <code>Y.applyUpdate()</code> to perfectly merge changes without conflicts.</li>
+</ol>
+</div>
+
+<div id="recipeB" class="recipe-content hide bg-white p-6 rounded-lg shadow-sm border border-green-200">
+<h3 class="text-xl font-bold mb-4 text-green-800">The Bare-Metal Performance Stack</h3>
+<p class="text-sm mb-6">Maximizes raw performance, native compilation, and avoids browser webview overhead entirely. Harder for AI to write, but results in a premium native feel.</p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+<div class="bg-green-50 p-3 rounded border border-green-100">
+<p class="text-xs text-gray-500 uppercase">Frontend</p>
+<p class="font-bold">Flutter (Dart)</p>
+</div>
+<div class="bg-green-50 p-3 rounded border border-green-100">
+<p class="text-xs text-gray-500 uppercase">Editor Engine</p>
+<p class="font-bold">SuperEditor (Dart)</p>
+</div>
+<div class="bg-green-50 p-3 rounded border border-green-100">
+<p class="text-xs text-gray-500 uppercase">Local Database</p>
+<p class="font-bold">ObjectBox (NoSQL)</p>
+</div>
+<div class="bg-green-50 p-3 rounded border border-green-100">
+<p class="text-xs text-gray-500 uppercase">CRDT Layer</p>
+<p class="font-bold">CBL (Couchbase Lite) or Automerge-RS via FFI</p>
+</div>
+</div>
+<h4 class="font-bold text-sm mb-2">Sync Workflow:</h4>
+<ol class="list-decimal list-inside text-sm space-y-2 text-gray-700">
+<li>User interacts with Flutter's SuperEditor. Custom block logic updates an ObjectBox local database entity.</li>
+<li>If utilizing Automerge via Rust FFI (Foreign Function Interface), changes are serialized into a highly compressed document delta.</li>
+<li>Flutter's Google Sign-In package requests `drive.appdata` scopes.</li>
+<li>The app securely uploads the binary deltas to Google Drive.</li>
+<li>ObjectBox's rapid read/write speeds allow for instant local startup, resolving the delta merges asynchronously in the background.</li>
+</ol>
+</div>
+</section>
+
+</div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    initFrameworkChart();
+    initEditorChart();
+    setupNavigation();
+});
+
+function setupNavigation() {
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('.content-section');
+    const mainContent = document.getElementById('main-content');
+
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            navButtons.forEach(b => b.classList.remove('active', 'font-semibold', 'bg-[#EBEBEA]'));
+            e.target.classList.add('active', 'font-semibold', 'bg-[#EBEBEA]');
+            
+            const targetId = e.target.getAttribute('data-target');
+            const targetSection = document.getElementById(targetId);
+            
+            mainContent.scrollTo({
+                top: targetSection.offsetTop - 40,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    mainContent.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (mainContent.scrollTop >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navButtons.forEach(btn => {
+            btn.classList.remove('active', 'font-semibold', 'bg-[#EBEBEA]');
+            if (btn.getAttribute('data-target') === current) {
+                btn.classList.add('active', 'font-semibold', 'bg-[#EBEBEA]');
+            }
+        });
+    });
+}
+
+function initFrameworkChart() {
+    const ctx = document.getElementById('frameworkChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Tauri v2 (React/TS)', 'Flutter (Dart)', 'KMP (Compose)'],
+            datasets: [
+                {
+                    label: 'Memory Efficiency',
+                    data: [9, 6, 8],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Rendering Speed',
+                    data: [7, 9, 9],
+                    backgroundColor: '#10b981',
+                    borderRadius: 4
+                },
+                {
+                    label: 'LLM-Friendliness (Data Vol)',
+                    data: [10, 7, 5],
+                    backgroundColor: '#8b5cf6',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+                x: { max: 10, title: { display: true, text: 'Score (out of 10)' } }
+            }
+        }
+    });
+}
+
+function initEditorChart() {
+    const ctx = document.getElementById('editorChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Out-of-box Notion UI', 'Extensibility', 'Mobile Touch Support', 'AI Context Simplicity'],
+            datasets: [
+                {
+                    label: 'BlockNote',
+                    data: [9, 6, 8, 9],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: '#3b82f6',
+                    pointBackgroundColor: '#3b82f6'
+                },
+                {
+                    label: 'TipTap Core',
+                    data: [3, 10, 8, 6],
+                    backgroundColor: 'rgba(55, 53, 47, 0.2)',
+                    borderColor: '#37352F',
+                    pointBackgroundColor: '#37352F'
+                },
+                {
+                    label: 'Lexical',
+                    data: [4, 9, 9, 4],
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderColor: '#10b981',
+                    pointBackgroundColor: '#10b981'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { min: 0, max: 10, ticks: { display: false } }
+            },
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+
+function switchTab(recipeId, element) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'border-b-2', 'border-[#37352F]', 'text-[#37352F]');
+        btn.classList.add('text-gray-500');
+    });
+    
+    element.classList.add('active', 'border-b-2', 'border-[#37352F]', 'text-[#37352F]');
+    element.classList.remove('text-gray-500');
+
+    document.querySelectorAll('.recipe-content').forEach(content => {
+        content.classList.add('hide');
+    });
+    document.getElementById(recipeId).classList.remove('hide');
+}
+
+const syncDetails = {
+    local: "<h4 class='font-bold mb-2 text-gray-800'>Storage Strategy: Local DB + CRDT</h4><p class='text-sm text-gray-600 mb-2'>Saving a single SQLite file to Drive causes corruption when multiple devices sync. Instead, the local DB (SQLite or ObjectBox) acts as a high-speed cache for UI responsiveness.</p><p class='text-sm text-gray-600'>Every document modification generates a highly compressed byte-array <strong>Delta</strong> via Yjs or Automerge. These deltas are what get saved to disk and queued for upload.</p>",
+    drive: "<h4 class='font-bold mb-2 text-blue-800'>Google Drive appDataFolder</h4><p class='text-sm text-gray-600 mb-2'>By requesting the <code>https://www.googleapis.com/auth/drive.appdata</code> scope, the app gets access to a hidden folder in the user's Drive. Users cannot see or accidentally delete these sync files from the standard Drive UI.</p><p class='text-sm text-gray-600'>The background worker uploads the Yjs binary state deltas here. No proprietary backend server is required, maximizing privacy and zero-cost scaling.</p>",
+    crdt: "<h4 class='font-bold mb-2 text-green-800'>Conflict Resolution</h4><p class='text-sm text-gray-600 mb-2'>When Device B comes online, it polls the <code>appDataFolder</code>. It downloads new binary deltas and applies them to its local CRDT document (e.g., <code>Y.applyUpdate(doc, downloadedDelta)</code>).</p><p class='text-sm text-gray-600'>CRDT mathematics guarantee that even if Device A and Device B edited the exact same paragraph offline, the states will perfectly merge without data loss when they sync via Drive.</p>"
+};
+
+function showSyncDetail(key) {
+    const box = document.getElementById('sync-detail-box');
+    box.style.opacity = 0;
+    setTimeout(() => {
+        box.innerHTML = syncDetails[key];
+        box.style.opacity = 1;
+        box.style.transition = 'opacity 0.3s ease';
+    }, 150);
+}
+</script>
+</body>
+</html>
