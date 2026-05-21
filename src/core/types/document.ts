@@ -5,10 +5,9 @@ export interface DocumentMeta {
   updatedAt: number;
 }
 
-export interface Document {
+export interface PageData {
   id: string;
   title: string;
-  blocks: unknown[];
   createdAt: number;
   updatedAt: number;
 }

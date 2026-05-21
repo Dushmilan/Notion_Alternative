@@ -1,19 +1,23 @@
+import { useEffect } from "react";
 import { useUIStore } from "@/state/uiStore";
-import { useEditorStore, type PageMeta } from "@/state/editorStore";
+import { useEditorStore } from "@/state/editorStore";
+import type { DocumentMeta } from "@/core/types/document";
 
-const mockPages: PageMeta[] = [
-  { id: "1", title: "Getting Started", updatedAt: Date.now() },
-  { id: "2", title: "Project Notes", updatedAt: Date.now() },
-  { id: "3", title: "Meeting Log", updatedAt: Date.now() },
+const mockPages: DocumentMeta[] = [
+  { id: "1", title: "Getting Started", updatedAt: Date.now(), createdAt: Date.now() },
+  { id: "2", title: "Project Notes", updatedAt: Date.now(), createdAt: Date.now() },
+  { id: "3", title: "Meeting Log", updatedAt: Date.now(), createdAt: Date.now() },
 ];
 
 export default function Sidebar() {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const { currentPageId, setCurrentPage, pages, setPages } = useEditorStore();
 
-  if (pages.length === 0) {
-    setPages(mockPages);
-  }
+  useEffect(() => {
+    if (pages.length === 0) {
+      setPages(mockPages);
+    }
+  }, [pages.length, setPages]);
 
   const displayPages = pages.length > 0 ? pages : mockPages;
 

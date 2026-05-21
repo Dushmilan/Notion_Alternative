@@ -1,17 +1,12 @@
 import { create } from "zustand";
-
-export interface PageMeta {
-  id: string;
-  title: string;
-  updatedAt: number;
-}
+import type { DocumentMeta } from "@/core/types/document";
 
 interface EditorState {
   currentPageId: string | null;
-  pages: PageMeta[];
+  pages: DocumentMeta[];
   setCurrentPage: (id: string) => void;
-  setPages: (pages: PageMeta[]) => void;
-  addPage: (page: PageMeta) => void;
+  setPages: (pages: DocumentMeta[]) => void;
+  addPage: (page: DocumentMeta) => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({

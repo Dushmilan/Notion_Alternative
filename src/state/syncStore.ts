@@ -1,6 +1,5 @@
 import { create } from "zustand";
-
-export type SyncStatus = "idle" | "syncing" | "error" | "offline";
+import type { SyncStatus } from "@/core/types/sync";
 
 interface SyncState {
   status: SyncStatus;

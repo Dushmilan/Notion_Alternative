@@ -1,11 +1,11 @@
 mod db;
 
-use db::Database;
+use db::{Database, InMemoryDatabase, SqliteDatabase};
 use serde::Serialize;
 use std::sync::Mutex;
 use tauri::State;
 
-pub struct DbState(Mutex<Database>);
+pub struct DbState(Mutex<Box<dyn Database>>);
 
 #[derive(Serialize)]
 pub struct DocumentMeta {
@@ -55,11 +55,11 @@ fn db_delete_document(state: State<DbState>, id: String) -> Result<(), String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let database = Database::new().expect("Failed to initialize database");
+    let database = SqliteDatabase::new().expect("Failed to initialize database");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .manage(DbState(Mutex::new(database)))
+        .manage(DbState(Mutex::new(Box::new(database))))
         .invoke_handler(tauri::generate_handler![
             db_init,
             db_save_document,
