@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@blocknote/react/style.css";
 
 body {
   font-family: "Inter", sans-serif;

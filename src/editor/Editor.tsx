@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { useCreateBlockNote, BlockNoteViewRaw } from "@blocknote/react";
 import { documentManager } from "@/core/document/manager";
 
 interface EditorProps {
@@ -14,18 +15,14 @@ export default function Editor({ documentId }: EditorProps) {
     };
   }, [documentId]);
 
-  return (
-    <div className="min-h-[500px]">
-      <div className="text-sm text-gray-500 mb-6">
-        Editor connected — Yjs doc{" "}
-        <code className="bg-[#EBEBEA] px-1 rounded">{doc.guid}</code>
-      </div>
-      <div className="prose prose-sm max-w-none">
-        <p className="text-gray-600">
-          BlockNote editor will render here. Yjs document is initialized and ready for
-          collaborative block editing.
-        </p>
-      </div>
-    </div>
-  );
+  const fragment = useMemo(() => doc.getXmlFragment("blocknote"), [doc]);
+
+  const editor = useCreateBlockNote({
+    collaboration: {
+      fragment,
+      user: { name: "Me", color: "#ff0000" },
+    },
+  });
+
+  return <BlockNoteViewRaw editor={editor} />;
 }

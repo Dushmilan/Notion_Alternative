@@ -125,7 +125,7 @@ describe("SyncWorker", () => {
     worker.start();
     worker.stop();
 
-    const callCount = mocks.transport.list.mock.calls.length;
+    const callCount = vi.mocked(mocks.transport.list).mock.calls.length;
 
     await vi.advanceTimersByTimeAsync(500);
     expect(mocks.transport.list).toHaveBeenCalledTimes(callCount);
