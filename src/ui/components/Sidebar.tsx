@@ -1,25 +1,37 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useUIStore } from "@/state/uiStore";
 import { useEditorStore } from "@/state/editorStore";
-import type { DocumentMeta } from "@/core/types/document";
-
-const mockPages: DocumentMeta[] = [
-  { id: "1", title: "Getting Started", updatedAt: Date.now(), createdAt: Date.now() },
-  { id: "2", title: "Project Notes", updatedAt: Date.now(), createdAt: Date.now() },
-  { id: "3", title: "Meeting Log", updatedAt: Date.now(), createdAt: Date.now() },
-];
+import { listDocuments, saveDocument } from "@/core/db/queries";
 
 export default function Sidebar() {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const { currentPageId, setCurrentPage, pages, setPages } = useEditorStore();
 
-  useEffect(() => {
-    if (pages.length === 0) {
-      setPages(mockPages);
-    }
-  }, [pages.length, setPages]);
+  const loadPages = useCallback(() => {
+    listDocuments()
+      .then((docs) => {
+        setPages(
+          docs.map((d) => {
+            const ts = new Date(d.updatedAt).getTime() || Date.now();
+            return { id: d.id, title: d.title, createdAt: ts, updatedAt: ts };
+          }),
+        );
+      })
+      .catch(() => {
+        // DB unavailable — show empty list
+      });
+  }, [setPages]);
 
-  const displayPages = pages.length > 0 ? pages : mockPages;
+  useEffect(() => {
+    loadPages();
+  }, [loadPages]);
+
+  const handleNewPage = async () => {
+    const id = crypto.randomUUID();
+    await saveDocument(id, "Untitled", new Uint8Array(0));
+    loadPages();
+    setCurrentPage(id);
+  };
 
   if (!sidebarOpen) return null;
 
@@ -33,7 +45,7 @@ export default function Sidebar() {
         <div className="text-xs font-medium text-gray-400 uppercase tracking-wider px-2 mb-2">
           Pages
         </div>
-        {displayPages.map((page) => (
+        {pages.map((page) => (
           <button
             key={page.id}
             onClick={() => setCurrentPage(page.id)}
@@ -46,6 +58,12 @@ export default function Sidebar() {
             {page.title}
           </button>
         ))}
+        <button
+          onClick={handleNewPage}
+          className="w-full text-left px-3 py-2 rounded-md text-sm mb-0.5 mt-2 text-gray-500 hover:bg-[#EBEBEA] transition-colors"
+        >
+          + New Page
+        </button>
       </div>
     </nav>
   );

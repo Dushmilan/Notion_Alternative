@@ -6,6 +6,7 @@ export class DocumentManager {
   private docs = new Map<string, Y.Doc>();
   private persistence: PersistenceAdapter;
   private saveTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  private loadPromises = new Map<string, Promise<void>>();
   private saveDebounceMs: number;
 
   constructor(persistence: PersistenceAdapter = tauriPersistence, saveDebounceMs = 500) {
@@ -20,7 +21,8 @@ export class DocumentManager {
     const doc = new Y.Doc({ guid: id });
     this.docs.set(id, doc);
 
-    this.loadInBackground(id);
+    const loadPromise = this.loadInBackground(id);
+    this.loadPromises.set(id, loadPromise);
 
     doc.on("update", () => this.scheduleSave(id));
     return doc;
@@ -28,6 +30,11 @@ export class DocumentManager {
 
   get(id: string): Y.Doc | undefined {
     return this.docs.get(id);
+  }
+
+  async whenReady(id: string): Promise<void> {
+    const promise = this.loadPromises.get(id);
+    if (promise) await promise;
   }
 
   async close(id: string): Promise<void> {
@@ -43,6 +50,7 @@ export class DocumentManager {
       doc.destroy();
     }
     this.docs.delete(id);
+    this.loadPromises.delete(id);
   }
 
   private async loadInBackground(id: string): Promise<void> {

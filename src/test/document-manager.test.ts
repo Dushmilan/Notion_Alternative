@@ -66,4 +66,39 @@ describe("DocumentManager", () => {
     await manager.close("test-1");
     expect(persistence.save).toHaveBeenCalledTimes(1);
   });
+
+  it("auto-saves when Yjs document is updated", async () => {
+    const doc = manager.open("test-1");
+
+    const ytext = doc.getText("content");
+    ytext.insert(0, "Hello");
+
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(persistence.save).toHaveBeenCalledWith("test-1", expect.any(Uint8Array));
+  });
+});
+
+describe("DocumentManager round-trip", () => {
+  it("restores content after close and reopen", async () => {
+    const store = new Map<string, Uint8Array>();
+    const persistence: PersistenceAdapter = {
+      load: vi.fn(async (id) => store.get(id) ?? null),
+      save: vi.fn(async (id, state) => {
+        store.set(id, state);
+      }),
+    };
+
+    const manager = new DocumentManager(persistence, 10);
+
+    const doc1 = manager.open("rt-1");
+    const text1 = doc1.getText("content");
+    text1.insert(0, "Persisted content");
+    await manager.close("rt-1");
+
+    const doc2 = manager.open("rt-1");
+    await manager.whenReady("rt-1");
+    const text2 = doc2.getText("content");
+    expect(text2.toString()).toBe("Persisted content");
+  });
 });

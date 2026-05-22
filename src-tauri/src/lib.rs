@@ -1,6 +1,6 @@
 mod db;
 
-use db::{Database, InMemoryDatabase, SqliteDatabase};
+use db::{Database, SqliteDatabase};
 use serde::Serialize;
 use std::sync::Mutex;
 use tauri::State;
